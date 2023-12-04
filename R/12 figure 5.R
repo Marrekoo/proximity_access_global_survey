@@ -12,16 +12,13 @@ library(forcats)
 # Read in raw data for both sets
 
 df_global_raw <- read.csv("data/global_data.csv")
-
 df_global <- df_global_raw[c(1,22)]
-
 
 # Since the df_global only contains distance classes, we have to replace values
 
 distance_classes <- c(1,2,3,4,5,6,7)
 distance_thresholds <- c(400,800,1200,1600,2400,5000,10000)
 dist_conv <- data.frame(distance_classes,distance_thresholds)
-
 df_global <- inner_join(df_global,dist_conv, by=c("q4_nearby_distance"="distance_classes"))
 
 #Contextual division of countries
@@ -64,7 +61,6 @@ summarydata_cont <- df_global %>% count(continents)
 summarydata_dist <- inner_join(summarydata_dist, summarydata_cont, by = "continents")
 summarydata_dist$cumrel <- summarydata_dist$cum_sum/summarydata_dist$n
 summarydata_cutoff <- filter(summarydata_dist, distance_thresholds %in% "1200")
-
 
 df_global <- inner_join(df_global, select(summarydata_cutoff, continents, cumrel), by= "continents")
 
@@ -111,9 +107,7 @@ df_cont.labs <- merge(df_cont.labs, select(summarydata_cutoff, continents, graph
                       sort = FALSE)
 
 df_cont.labs$graph_order[df_cont.labs$cont.numbers == 0] <- 0 # Add the "All" label
-
 df_cont.labs <- df_cont.labs[order(df_cont.labs$graph_order),] # Now they are in order of the 1200 meter cumulative percentile
-
 
 # The plotting begins. The discrete labels are based on the re-ordering by 1200 meter mark.
 
